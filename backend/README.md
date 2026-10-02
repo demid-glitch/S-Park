@@ -7,6 +7,7 @@ FastAPI + PostgreSQL + Redis. Step 1 of the build order: core, DB schema, RBAC.
 ```bash
 cp backend/.env.example backend/.env   # set JWT_SECRET and INITIAL_ADMIN_PASSWORD
 docker compose up -d --build           # API on http://localhost:8000
+# Port taken? Put API_PORT=8081 (or POSTGRES_PORT / REDIS_PORT) in a .env file at the repo root.
 docker compose logs -f api             # logs (OTP codes appear here)
 docker compose down                    # stop (add -v to also wipe the database)
 ```

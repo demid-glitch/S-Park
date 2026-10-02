@@ -7,7 +7,7 @@ services:
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-spark}:${POSTGRES_PASSWORD:-spark}@postgres:5432/${POSTGRES_DB:-spark}
       REDIS_URL: redis://redis:6379/0
     ports:
-      - "8000:8000"
+      - "${API_PORT:-8000}:8000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -22,7 +22,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-spark}
       POSTGRES_DB: ${POSTGRES_DB:-spark}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -33,7 +33,7 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT:-6379}:6379"
 
 volumes:
   pgdata:
