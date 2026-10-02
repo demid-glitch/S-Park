@@ -2,7 +2,16 @@
 
 FastAPI + PostgreSQL + Redis. Step 1 of the build order: core, DB schema, RBAC.
 
-## Run locally
+## Run locally with Docker (easiest)
+
+```bash
+cp backend/.env.example backend/.env   # set JWT_SECRET and INITIAL_ADMIN_PASSWORD
+docker compose up -d --build           # API on http://localhost:8000
+docker compose logs -f api             # logs (OTP codes appear here)
+docker compose down                    # stop (add -v to also wipe the database)
+```
+
+## Run locally without Docker for the API
 
 ```bash
 docker compose up -d            # from repo root: postgres + redis
