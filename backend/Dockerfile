@@ -7,7 +7,7 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 COPY . .
-RUN useradd --create-home app && chmod +x start.sh
+RUN sed -i "s/\r$//" start.sh && useradd --create-home app && chmod +x start.sh
 USER app
 
 EXPOSE 8000
