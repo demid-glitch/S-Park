@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, ForeignKey, String, UniqueConstraint
+from sqlalchemy import Boolean, CheckConstraint, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, TimestampMixin
@@ -8,9 +8,13 @@ from app.models.enums import Role
 
 class User(TimestampMixin, Base):
     __tablename__ = "users"
+    __table_args__ = (CheckConstraint("phone IS NOT NULL OR username IS NOT NULL", name="has_login"),)
 
     id: Mapped[int] = mapped_column(BigIntPK, primary_key=True)
-    phone: Mapped[str] = mapped_column(String(20), unique=True, index=True)
+    phone: Mapped[str | None] = mapped_column(String(20), unique=True, index=True)
+    # Staff may also log in with username + password; customers use phone OTP only.
+    username: Mapped[str | None] = mapped_column(String(50), unique=True, index=True)
+    password_hash: Mapped[str | None] = mapped_column(String(255))
     full_name: Mapped[str | None] = mapped_column(String(120))
     email: Mapped[str | None] = mapped_column(String(255))
     role: Mapped[Role] = mapped_column(enum_column(Role, "user_role"), default=Role.CUSTOMER, index=True)

@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -18,12 +18,24 @@ class Settings(BaseSettings):
     access_token_minutes: int = 30
     refresh_token_days: int = 30
 
+    login_max_failures: int = 10
+    login_lockout_seconds: int = 900
+
     otp_length: int = 6
     otp_ttl_seconds: int = 300
     otp_resend_cooldown_seconds: int = 60
     otp_max_attempts: int = 5
 
     cors_origins: list[str] = []
+
+    @field_validator("database_url")
+    @classmethod
+    def _use_asyncpg(cls, url: str) -> str:
+        # Hosting providers (e.g. Render) hand out postgres:// or postgresql:// URLs.
+        for prefix in ("postgres://", "postgresql://"):
+            if url.startswith(prefix):
+                return "postgresql+asyncpg://" + url.removeprefix(prefix)
+        return url
 
 
 @lru_cache

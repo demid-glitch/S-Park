@@ -12,6 +12,16 @@ class OtpVerify(BaseModel):
     code: str = Field(pattern=r"^\d{4,8}$")
 
 
+class PasswordLogin(BaseModel):
+    username: str = Field(max_length=50)
+    password: str = Field(max_length=256)
+
+
+class PasswordChange(BaseModel):
+    current_password: str = Field(max_length=256)
+    new_password: str = Field(min_length=10, max_length=256)
+
+
 class RefreshRequest(BaseModel):
     refresh_token: str
 

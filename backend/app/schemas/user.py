@@ -11,7 +11,8 @@ Language = Literal["mn", "en"]
 
 class UserOut(ORMModel):
     id: int
-    phone: str
+    phone: str | None
+    username: str | None
     full_name: str | None
     email: str | None
     role: Role

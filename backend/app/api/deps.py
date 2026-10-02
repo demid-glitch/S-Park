@@ -6,7 +6,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
-from app.core.otp import ConsoleSmsSender, OtpService
+from app.core.otp import ConsoleSmsSender, KeyValueStore, OtpService
 from app.core.rbac import Permission, can_access_lot, has_permission
 from app.core.redis import get_redis
 from app.core.security import InvalidToken, decode_token
@@ -18,9 +18,16 @@ DbSession = Annotated[AsyncSession, Depends(get_db)]
 _bearer = HTTPBearer(auto_error=False)
 
 
-def get_otp_service() -> OtpService:
+def get_kv_store() -> KeyValueStore:
+    return get_redis()
+
+
+KvStore = Annotated[KeyValueStore, Depends(get_kv_store)]
+
+
+def get_otp_service(store: KvStore) -> OtpService:
     settings = get_settings()
-    return OtpService(get_redis(), ConsoleSmsSender(settings.environment), settings)
+    return OtpService(store, ConsoleSmsSender(settings.environment), settings)
 
 
 async def get_current_user(

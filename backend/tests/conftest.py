@@ -10,7 +10,7 @@ from sqlalchemy import event  # noqa: E402
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine  # noqa: E402
 from sqlalchemy.pool import StaticPool  # noqa: E402
 
-from app.api.deps import get_otp_service  # noqa: E402
+from app.api.deps import get_kv_store, get_otp_service  # noqa: E402
 from app.core.config import get_settings  # noqa: E402
 from app.core.otp import OtpService  # noqa: E402
 from app.core.security import create_access_token  # noqa: E402
@@ -101,6 +101,7 @@ async def client(sessionmaker, sms) -> AsyncIterator[AsyncClient]:
             yield session
 
     app.dependency_overrides[get_db] = _db
+    app.dependency_overrides[get_kv_store] = lambda: store
     app.dependency_overrides[get_otp_service] = lambda: OtpService(store, sms, get_settings())
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
         yield c

@@ -23,3 +23,13 @@ def normalize_plate(raw: str) -> str:
     if not 2 <= len(plate) <= 16:
         raise ValueError("invalid plate")
     return plate
+
+
+_USERNAME_RE = re.compile(r"^[a-z0-9_.-]{3,50}$")
+
+
+def normalize_username(raw: str) -> str:
+    username = raw.strip().lower()
+    if not _USERNAME_RE.fullmatch(username):
+        raise ValueError("username must be 3-50 characters: letters, digits, _ . -")
+    return username
